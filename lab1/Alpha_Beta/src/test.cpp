@@ -7,26 +7,27 @@ using namespace ChineseChess;
 
 //博弈树搜索，depth为搜索深度
 int cnt = 1;
-int total_depth = 2;
+int total_depth = 4;
 int ans_id = 0;
-int alphaBeta(GameTreeNode node, int alpha, int beta, int depth, bool isMaximizer) {
-    printf("%d alpah: %d, beta: %d, depth: %d\n", cnt++, alpha, beta, depth);
+int alphaBeta(GameTreeNode* node, int alpha, int beta, int depth, bool isMaximizer) {
+    // printf("%d alpah: %d, beta: %d, depth: %d\n", cnt++, alpha, beta, depth);
     if (depth == 0) {
-        int value = node.getEvaluationScore();
+        int value = node->getEvaluationScore();
         // printf("EvaluationScore: %d\n", value);
         return value;
     }
     //TOD alpha-beta剪枝过程
     if (isMaximizer) {
         int value = -10000;
-        for (int i = 0; i < (int)node.children.size(); i++) {
-            GameTreeNode* child = node.children[i];
-            int temp = alphaBeta(*child, alpha, beta, depth - 1, false);
+        int i = 0;
+        for (GameTreeNode* child : node->children) {
+            int temp = alphaBeta(child, alpha, beta, depth - 1, false);
             if(temp > value) {
                 ans_id = i;
             }
             value = std::max(value, temp);
             alpha = std::max(alpha, value);
+            i++;
             if (alpha >= beta)
                 break;
         }
@@ -34,9 +35,8 @@ int alphaBeta(GameTreeNode node, int alpha, int beta, int depth, bool isMaximize
     }
     else {
         int value = 10000;
-        for (int i = 0; i < (int)node.children.size(); i++) {
-            GameTreeNode* child = node.children[i];
-            value = std::min(value, alphaBeta(*child, alpha, beta, depth - 1, true));
+        for (GameTreeNode* child : node->children) {
+            value = std::min(value, alphaBeta(child, alpha, beta, depth - 1, true));
             beta = std::min(beta, value);
             if (alpha >= beta)
                 break;
@@ -44,6 +44,12 @@ int alphaBeta(GameTreeNode node, int alpha, int beta, int depth, bool isMaximize
         return value;
     }
     return 0;
+}
+
+void test(GameTreeNode *node) {
+    for (GameTreeNode* child : node->children) {
+        if (child) test(child);
+    }
 }
 
 void run(int i) {
@@ -66,13 +72,14 @@ void run(int i) {
     }
 
     file.close();
-    
+    printf("read file end\n");
     GameTreeNode root(true, board, std::numeric_limits<int>::min(), total_depth);
     // printf("num children: %lld\n", root.children.size());
-    
+    // test(&root);
+    // return ;
     //TOD
-    // printf("alphaBeta\n");
-    alphaBeta(root, -10000, 10000, total_depth, true);
+    printf("start alphaBeta\n");
+    alphaBeta(&root, -10000, 10000, total_depth, true);
     // printf("alphaBeta end\n");
 
     //代码测试
@@ -88,12 +95,15 @@ void run(int i) {
     std::vector<Move> red_moves = _board.getMoves(true);
     std::vector<Move> black_moves = _board.getMoves(false);
 
-    // printf("red_moves: %d\n", red_moves.size());
-    // for (int i = 0; i < red_moves.size(); i++) {
-    //     std::cout << "init: " << red_moves[i].init_x <<  " " << red_moves[i].init_y << std::endl;
-    //     std::cout << "next: " << red_moves[i].next_x <<  " " << red_moves[i].next_y << std::endl;
-    //     std::cout << "score " << red_moves[i].score << std::endl;
-    // }
+    printf("red_moves: %ld\n", red_moves.size());
+    for (int i = 0; i < red_moves.size(); i++) {
+        int initx = red_moves[i].init_x;
+        int inity = red_moves[i].init_y;
+        int nextx = red_moves[i].next_x;
+        int nexty = red_moves[i].next_y;
+        char chess = cur_board[inity][initx];
+        std::cout << chess << " (" << initx << "," << inity << ") (" << nextx << "," << nexty << ")" << std::endl;
+    }
     // printf("black_moves: %d\n", black_moves.size());
     // for (int i = 0; i < black_moves.size(); i++) {
     //     std::cout << "init: " << black_moves[i].init_x <<  " " << black_moves[i].init_y << std::endl;
@@ -102,21 +112,22 @@ void run(int i) {
     // }
     
     printf("ans_id: %d\n", ans_id);
+    printf("total_depth: %d\n", total_depth);
     std::ofstream output_file("../output/output_" + std::to_string(i) + ".txt");
     int initx = red_moves[ans_id].init_x;
     int inity = red_moves[ans_id].init_y;
     int nextx = red_moves[ans_id].next_x;
     int nexty = red_moves[ans_id].next_y;
-    char chess = cur_board[initx][inity];
+    char chess = cur_board[inity][initx];
     output_file << chess << " (" << initx << "," << inity << ") (" << nextx << "," << nexty << ")";
     std::cout << chess << " (" << initx << "," << inity << ") (" << nextx << "," << nexty << ")" << std::endl;
 
     return ;
 }
 int main(){
-    run(1);
-    // for (int i = 1; i <= 10; i++) {
-    //     run(i);
-    // }
+    // run(6);
+    for (int i = 6; i <= 10; i++) {
+        run(i);
+    }
     return 0;
 }

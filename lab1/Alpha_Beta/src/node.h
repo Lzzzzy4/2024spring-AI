@@ -146,6 +146,7 @@ namespace ChineseChess
             for (int i = 0; i < sizeX; ++i) {
                 for (int j = 0; j < sizeY; ++j) {
                     char pieceChar = board[i][j];
+                    // printf("pieceChar: %c i:%d j:%d \n", pieceChar, i, j);
                     if (pieceChar == '.') continue;
 
                     ChessPiece piece;
@@ -643,11 +644,11 @@ namespace ChineseChess
         void generateBingMoves(int x, int y, bool color) {
             //需要分条件考虑，小兵在过楚河汉界之前只能前进，之后可以左右前
             std::vector<Move> BingMoves;
+            Move cur_move;
             //TOD
             // printf("            bing x: %d, y: %d\n", x, y);
             if (color == true){
                 if (y >= 5){ // 没过河
-                    Move cur_move;
                     cur_move.init_x = x;
                     cur_move.init_y = y;
                     cur_move.next_x = x;
@@ -658,14 +659,15 @@ namespace ChineseChess
                     }
                 }
                 else {
-                    Move cur_move;
-                    cur_move.init_x = x;
-                    cur_move.init_y = y;
-                    cur_move.next_x = x;
-                    cur_move.next_y = y - 1;
-                    cur_move.score = 0;
-                    if (board[y - 1][x] == '.') {
-                        BingMoves.push_back(cur_move);
+                    if (y - 1 >= 0){
+                        cur_move.init_x = x;
+                        cur_move.init_y = y;
+                        cur_move.next_x = x;
+                        cur_move.next_y = y - 1;
+                        cur_move.score = 0;
+                        if (board[y - 1][x] == '.') {
+                            BingMoves.push_back(cur_move);
+                        }
                     }
                     if (x - 1 >= 0) {
                         cur_move.init_x = x;
@@ -691,7 +693,6 @@ namespace ChineseChess
             }
             else {
                 if (y <= 4){ // 没过河
-                    Move cur_move;
                     cur_move.init_x = x;
                     cur_move.init_y = y;
                     cur_move.next_x = x;
@@ -702,14 +703,15 @@ namespace ChineseChess
                     }
                 }
                 else {
-                    Move cur_move;
-                    cur_move.init_x = x;
-                    cur_move.init_y = y;
-                    cur_move.next_x = x;
-                    cur_move.next_y = y + 1;
-                    cur_move.score = 0;
-                    if (board[y + 1][x] == '.') {
-                        BingMoves.push_back(cur_move);
+                    if( y + 1 < sizeX){
+                        cur_move.init_x = x;
+                        cur_move.init_y = y;
+                        cur_move.next_x = x;
+                        cur_move.next_y = y + 1;
+                        cur_move.score = 0;
+                        if (board[y + 1][x] == '.') {
+                            BingMoves.push_back(cur_move);
+                        }
                     }
                     if (x - 1 >= 0) {
                         cur_move.init_x = x;
@@ -867,20 +869,23 @@ namespace ChineseChess
         // 构造函数
         GameTreeNode(bool color, std::vector<std::vector<char>> initBoard, int evaluationScore, int depth)
             : color(color), evaluationScore(evaluationScore) {
+            // printf("aaaaa\n");
             board.initializeBoard(initBoard);
+            // printf("bbbbb\n");
             std::vector<Move> moves = board.getMoves(color);
+            // printf("cccccc\n");
             children.clear();
+            // printf("ddddddd\n");
             std::vector<std::vector<char>> cur_board = board.getBoard();
 
             // 为合法动作创建子节点
-            // printf("Moves: %d\n", moves.size());
+            // printf("GameTreeNode  depth: %d\n", depth);
             if (depth > 0){
                 for (int i = 0; i < (int)moves.size(); i++) {
                     GameTreeNode* child = updateBoard(cur_board, moves[i], color, depth - 1);
                     children.push_back(child);
                 }
             }
-            // printf("222\n");
         }
 
         //根据当前棋盘和动作构建新棋盘（子节点）
@@ -916,7 +921,7 @@ namespace ChineseChess
         
         ~GameTreeNode() {
             for (GameTreeNode* child : children) {
-                delete child;
+                if(child != nullptr)delete child;
             }
         }
 
