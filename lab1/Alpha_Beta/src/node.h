@@ -105,10 +105,12 @@ namespace ChineseChess
 
     //行期可能性评估，这里更多是对下一步动作的评估
     std::map<std::string, int> next_move_values = {
-                                            {"Jiang", 9999},
-                                            {"Ma", 100},
-                                            {"Ju", 500},
-                                            {"Pao", 100},
+                                            {"Jiang", 20000},
+                                            {"Ma", 200},
+                                            {"Ju", 600},
+                                            {"Pao", 200},
+                                            {"Xiang", 30},
+                                            {"Shi", -20},
                                             {"Bing", -20}
                                         };
     
@@ -864,6 +866,7 @@ namespace ChineseChess
         ChessBoard board; // 当前棋盘状态
         std::vector<GameTreeNode*> children; // 子节点列表
         int evaluationScore; // 棋盘评估分数
+        int eat_value; // 吃子分数
 
     public:
         // 构造函数
@@ -901,6 +904,54 @@ namespace ChineseChess
 
             test = new GameTreeNode(!color, cur_board, 0, depth);
             test->color = !color;
+            switch (goal_chess)
+            {
+            case 'R':
+                test->eat_value = -next_move_values["Ju"];
+                break;
+            case 'C':
+                test->eat_value = -next_move_values["Pao"];
+                break;
+            case 'N':
+                test->eat_value = -next_move_values["Ma"];
+                break;
+            case 'B':
+                test->eat_value = -next_move_values["Xiang"];
+                break;
+            case 'A':
+                test->eat_value = -next_move_values["Shi"];
+                break;
+            case 'K':
+                test->eat_value = -next_move_values["Jiang"];
+                break;
+            case 'P':
+                test->eat_value = -next_move_values["Bing"];
+                break;
+            case 'r':
+                test->eat_value = next_move_values["Ju"];
+                break;
+            case 'c':
+                test->eat_value = next_move_values["Pao"];
+                break;
+            case 'n':
+                test->eat_value = next_move_values["Ma"];
+                break;
+            case 'b':
+                test->eat_value = next_move_values["Xiang"];
+                break;
+            case 'a':
+                test->eat_value = next_move_values["Shi"];
+                break;
+            case 'k':
+                test->eat_value = next_move_values["Jiang"];
+                break;
+            case 'p':
+                test->eat_value = next_move_values["Bing"];
+                break;
+            default:
+                test->eat_value = 0;
+                break;
+            }
             // test->board.initializeBoard(cur_board);
             // test->evaluationScore = test->getEvaluationScore();
             
@@ -911,7 +962,7 @@ namespace ChineseChess
         int getEvaluationScore() {
             // return 0;
             evaluationScore = board.evaluateNode();
-            return evaluationScore;
+            return evaluationScore + eat_value;
         }
 
         //返回棋盘类
