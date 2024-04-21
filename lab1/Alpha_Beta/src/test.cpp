@@ -9,8 +9,10 @@ using namespace ChineseChess;
 int cnt = 1;
 int total_depth = 4;
 int ans_id = 0;
+int abnum = 0;
 int alphaBeta(GameTreeNode* node, int alpha, int beta, int depth, bool isMaximizer) {
     // printf("%d alpah: %d, beta: %d, depth: %d\n", cnt++, alpha, beta, depth);
+    abnum++;
     if (depth == 0) {
         int value = node->getEvaluationScore();
         // printf("EvaluationScore: %d\n", value);
@@ -46,6 +48,14 @@ int alphaBeta(GameTreeNode* node, int alpha, int beta, int depth, bool isMaximiz
         return value;
     }
     return 0;
+}
+
+int countallnode (GameTreeNode *node) {
+    int cnt = 1;
+    for (GameTreeNode* child : node->children) {
+        if (child) cnt += countallnode(child);
+    }
+    return cnt;
 }
 
 void test(GameTreeNode *node) {
@@ -126,10 +136,13 @@ void run(int i) {
     output_file << chess << " (" << initx << "," << inity << ") (" << nextx << "," << nexty << ")";
     std::cout << chess << " (" << initx << "," << inity << ") (" << nextx << "," << nexty << ")" << std::endl;
 
+    printf("abnum: %d\n", abnum);
+    printf("countallnode: %d\n", countallnode(&root));
+
     return ;
 }
 int main(){
-    // run(6);
+    // run(1);
     for (int i = 1; i <= 10; i++) {
         printf("run %d\n", i);
         run(i);
