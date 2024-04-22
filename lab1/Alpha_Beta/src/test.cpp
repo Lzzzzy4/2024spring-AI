@@ -147,10 +147,11 @@ void run(int i) {
     output_file << chess << " (" << initx << "," << 9 - inity << ") (" << nextx << "," << 9 - nexty << ")";
     std::cout << chess << " (" << initx << "," << 9 - inity << ") (" << nextx << "," << 9 - nexty << ")\n" << std::endl;
 
+
     return ;
 }
 int main(){
-    run(7); 
+    // run(3); 
     // for (int i = 1; i <= 10; i++) {
     //     printf("run %d\n", i);
     //     if (i == 9)total_depth = 7;
@@ -159,5 +160,12 @@ int main(){
     //     run(i);
     //     win = false;
     // }
+
+    for (int i = 1; i <= 10; i++) {
+        printf("run %d\n", i);
+        run(i);
+        win = false;
+        lose = false;
+    }
     return 0;
 }

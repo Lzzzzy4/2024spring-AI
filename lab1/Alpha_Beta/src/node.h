@@ -629,6 +629,39 @@ namespace ChineseChess
                 }
                 JiangMoves.push_back(cur_move);
             }
+            // 飞将
+            if (color == true){
+                for (int j = y - 1; j >= 0; j--){
+                    if (board[j][x] != '.' && board[j][x] != 'k'){
+                        break;
+                    }
+                    if (board[j][x] == 'k'){
+                        Move cur_move;
+                        cur_move.init_x = x;
+                        cur_move.init_y = y;
+                        cur_move.next_x = x;
+                        cur_move.next_y = j;
+                        cur_move.score = 0;
+                        JiangMoves.push_back(cur_move);
+                    }
+                }
+            }
+            if (color == false){
+                for (int j = y + 1; j < sizeX; j++){
+                    if (board[j][x] != '.' && board[j][x] != 'K'){
+                        break;
+                    }
+                    if (board[j][x] == 'K'){
+                        Move cur_move;
+                        cur_move.init_x = x;
+                        cur_move.init_y = y;
+                        cur_move.next_x = x;
+                        cur_move.next_y = j;
+                        cur_move.score = 0;
+                        JiangMoves.push_back(cur_move);
+                    }
+                }
+            }
 
             for (int i = 0; i < (int)JiangMoves.size(); i++) {
                 if(color) {
