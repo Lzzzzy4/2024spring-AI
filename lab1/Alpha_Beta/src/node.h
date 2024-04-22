@@ -96,7 +96,7 @@ namespace ChineseChess
     std::map<std::string, int> piece_values = {
                                             {"Jiang", 10000},
                                             {"Shi", 10},
-                                            {"Xiang", 30},
+                                            {"Xiang", 3},
                                             {"Ma", 300},
                                             {"Ju", 500},
                                             {"Pao", 300},
@@ -110,8 +110,8 @@ namespace ChineseChess
                                             {"Ju", 600},
                                             {"Pao", 200},
                                             {"Xiang", 30},
-                                            {"Shi", -20},
-                                            {"Bing", -20}
+                                            {"Shi", 0},
+                                            {"Bing", 0}
                                         };
     
     //动作结构体，每个动作设置score，可以方便剪枝
@@ -132,7 +132,7 @@ namespace ChineseChess
 
     // 定义棋盘类
     class ChessBoard {
-    private:
+    public:
         int sizeX, sizeY;   //棋盘大小，固定
         std::vector<ChessPiece> pieces;   //棋盘上所有棋子
         std::vector<std::vector<char>> board;    //当前棋盘、二维数组表示
@@ -645,6 +645,11 @@ namespace ChineseChess
         //生成兵的合法动作
         void generateBingMoves(int x, int y, bool color) {
             //需要分条件考虑，小兵在过楚河汉界之前只能前进，之后可以左右前
+            if (x == 4 && y == 8 && color == false) {
+                if (board[9][4] == 'K')
+                    // printf("????  %d %d %c \n",x,y,board[9][4]);
+                    1;
+            }
             std::vector<Move> BingMoves;
             Move cur_move;
             //TOD
@@ -656,9 +661,8 @@ namespace ChineseChess
                     cur_move.next_x = x;
                     cur_move.next_y = y - 1;
                     cur_move.score = 0;
-                    if (board[y - 1][x] == '.') {
+                    if (board[y - 1][x] == '.' || board[y - 1][x] >= 'a' && board[y - 1][x] <= 'z')
                         BingMoves.push_back(cur_move);
-                    }
                 }
                 else {
                     if (y - 1 >= 0){
@@ -667,9 +671,8 @@ namespace ChineseChess
                         cur_move.next_x = x;
                         cur_move.next_y = y - 1;
                         cur_move.score = 0;
-                        if (board[y - 1][x] == '.') {
+                        if (board[y - 1][x] == '.' || board[y - 1][x] >= 'a' && board[y - 1][x] <= 'z')
                             BingMoves.push_back(cur_move);
-                        }
                     }
                     if (x - 1 >= 0) {
                         cur_move.init_x = x;
@@ -677,9 +680,8 @@ namespace ChineseChess
                         cur_move.next_x = x - 1;
                         cur_move.next_y = y;
                         cur_move.score = 0;
-                        if (board[y][x - 1] == '.') {
+                        if (board[y][x - 1] == '.' || board[y][x - 1] >= 'a' && board[y][x - 1] <= 'z')
                             BingMoves.push_back(cur_move);
-                        }
                     }
                     if (x + 1 < sizeY) {
                         cur_move.init_x = x;
@@ -687,9 +689,8 @@ namespace ChineseChess
                         cur_move.next_x = x + 1;
                         cur_move.next_y = y;
                         cur_move.score = 0;
-                        if (board[y][x + 1] == '.') {
+                        if (board[y][x + 1] == '.' || board[y][x + 1] >= 'a' && board[y][x + 1] <= 'z')
                             BingMoves.push_back(cur_move);
-                        }
                     }
                 }
             }
@@ -700,20 +701,20 @@ namespace ChineseChess
                     cur_move.next_x = x;
                     cur_move.next_y = y + 1;
                     cur_move.score = 0;
-                    if (board[y + 1][x] == '.') {
+                    if (board[y + 1][x] == '.' || board[y + 1][x] >= 'A' && board[y + 1][x] <= 'Z')
                         BingMoves.push_back(cur_move);
-                    }
                 }
                 else {
-                    if( y + 1 < sizeX){
+                    if(y + 1 < sizeX){
+                        if (board[x][y + 1] == 'K')
+                            printf("123123 %d %d %d\n", x,y,board[x][y + 1]);
                         cur_move.init_x = x;
                         cur_move.init_y = y;
                         cur_move.next_x = x;
                         cur_move.next_y = y + 1;
                         cur_move.score = 0;
-                        if (board[y + 1][x] == '.') {
+                        if (board[y + 1][x] == '.' || board[y + 1][x] >= 'A' && board[y + 1][x] <= 'Z')
                             BingMoves.push_back(cur_move);
-                        }
                     }
                     if (x - 1 >= 0) {
                         cur_move.init_x = x;
@@ -721,9 +722,8 @@ namespace ChineseChess
                         cur_move.next_x = x - 1;
                         cur_move.next_y = y;
                         cur_move.score = 0;
-                        if (board[y][x - 1] == '.') {
+                        if (board[y][x - 1] == '.' || board[y][x - 1] >= 'A' && board[y][x - 1] <= 'Z')
                             BingMoves.push_back(cur_move);
-                        }
                     }
                     if (x + 1 < sizeY) {
                         cur_move.init_x = x;
@@ -731,9 +731,8 @@ namespace ChineseChess
                         cur_move.next_x = x + 1;
                         cur_move.next_y = y;
                         cur_move.score = 0;
-                        if (board[y][x + 1] == '.') {
+                        if (board[y][x + 1] == '.' || board[y][x + 1] >= 'A' && board[y][x + 1] <= 'Z')
                             BingMoves.push_back(cur_move);
-                        }
                     }
                 }
             }
@@ -867,10 +866,12 @@ namespace ChineseChess
         std::vector<GameTreeNode*> children; // 子节点列表
         int evaluationScore; // 棋盘评估分数
         int eat_value; // 吃子分数
+        bool win;
+        bool lose;
 
     public:
         // 构造函数
-        GameTreeNode(bool color, std::vector<std::vector<char>> initBoard, int evaluationScore, int depth)
+        GameTreeNode(bool color, std::vector<std::vector<char>> initBoard, int evaluationScore)
             : color(color), evaluationScore(evaluationScore) {
             // printf("aaaaa\n");
             board.initializeBoard(initBoard);
@@ -879,20 +880,22 @@ namespace ChineseChess
             // printf("cccccc\n");
             children.clear();
             // printf("ddddddd\n");
-            std::vector<std::vector<char>> cur_board = board.getBoard();
+            // std::vector<std::vector<char>> cur_board = board.getBoard();
+            win = false;
+            lose = false;
 
             // 为合法动作创建子节点
             // printf("GameTreeNode  depth: %d\n", depth);
-            if (depth > 0){
-                for (int i = 0; i < (int)moves.size(); i++) {
-                    GameTreeNode* child = updateBoard(cur_board, moves[i], color, depth - 1);
-                    children.push_back(child);
-                }
-            }
+            // if (depth > 0){
+            //     for (int i = 0; i < (int)moves.size(); i++) {
+            //         GameTreeNode* child = updateBoard(cur_board, moves[i], color, depth - 1);
+            //         children.push_back(child);
+            //     }
+            // }
         }
 
         //根据当前棋盘和动作构建新棋盘（子节点）
-        GameTreeNode* updateBoard(std::vector<std::vector<char>> cur_board, Move move, bool color, int depth) {
+        GameTreeNode* updateBoard(std::vector<std::vector<char>> cur_board, Move move, bool color) {
             //TOD
             // printf("updateBoard\n");
             GameTreeNode* test;
@@ -902,8 +905,14 @@ namespace ChineseChess
             cur_board[move.init_y][move.init_x] = '.';
             cur_board[move.next_y][move.next_x] = cur_chess;
 
-            test = new GameTreeNode(!color, cur_board, 0, depth);
-            test->color = !color;
+            test = new GameTreeNode(color, cur_board, 0);
+            if (goal_chess == 'k') {
+                test->win = true;
+            }
+            if (goal_chess == 'K') {
+                test->lose = true;
+            }
+            test->color = color;
             switch (goal_chess)
             {
             case 'R':
