@@ -42,14 +42,15 @@ struct CompareF {
 int Heuristic_Funtion(int i, int j, int end_i, int end_j)
 {
     return abs(i - end_i) + abs(j - end_j);
+    // return 0;
 }
 
-void Astar_search(const string input_file, int &step_nums, string &way)
+int Astar_search(const string input_file, int &step_nums, string &way)
 {
     ifstream file(input_file);
     if (!file.is_open()) {
         cout << "Error opening file!" << endl;
-        return;
+        return 0;
     }
 
     string line;
@@ -123,6 +124,7 @@ void Astar_search(const string input_file, int &step_nums, string &way)
     while(!open_list.empty())
     {
         // TODO: A*搜索过程实现 广搜
+        cnt ++;
         bool end = false;
         Search_Cell *current = open_list.top();
         open_list.pop();
@@ -220,7 +222,7 @@ void Astar_search(const string input_file, int &step_nums, string &way)
         delete[] close_list[i];
     }
 
-    return;
+    return cnt;
 }
 
 void output(const string output_file, int &step_nums, string &way)
@@ -248,14 +250,16 @@ int main(int argc, char *argv[])
     // printf("aaaa");
     string input_base = "../input/input_";
     string output_base = "../output/output_";
+    int sum = 0;
     for(int i = 0; i < 11; i++)
     {
         // if (i != 4) continue;
         printf("test i = %d\n", i);
         int step_nums = -1;
         string way = "";
-        Astar_search(input_base + to_string(i) + ".txt", step_nums, way);
+        sum += Astar_search(input_base + to_string(i) + ".txt", step_nums, way);
         output(output_base + to_string(i) + ".txt", step_nums, way);
     }
+    printf("sum = %d, average = %f\n", sum, (float)sum/10);
     return 0;
 }
