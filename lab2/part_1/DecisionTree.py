@@ -131,9 +131,9 @@ class DecisionTreeClassifier:
         new_node.feature = best_feature
         new_node.threshold = best_threshold
         if best_feature in continue_features:
-            X1 = X[X[best_feature] <= best_threshold].drop(columns=[best_feature])
+            X1 = X[X[best_feature] <= best_threshold]
             y1 = y[X[best_feature] <= best_threshold]
-            X2 = X[X[best_feature] > best_threshold].drop(columns=[best_feature])
+            X2 = X[X[best_feature] > best_threshold]
             y2 = y[X[best_feature] > best_threshold]
             if len(y1) != 0: new_node.child.append(self.generate_node(X1, y1))
             else: new_node.child.append(self.Node(value=max_cnt))
